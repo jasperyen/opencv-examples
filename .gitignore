@@ -241,3 +241,4 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 /java/CaptchaDetection/nbproject/private/
+/java/showMat/nbproject/private/
