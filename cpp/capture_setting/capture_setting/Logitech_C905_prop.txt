@@ -1,0 +1,20 @@
+Default
+
+CAP_PROP_BRIGHTNESS 128	            亮度				 0 ~ 255
+CAP_PROP_CONTRAST 32				對比度			 0 ~ 255
+CAP_PROP_SATURATION 32				飽和度/色彩亮度	 0 ~ 255
+CAP_PROP_GAIN 0						增益				 0 ~ 255
+CAP_PROP_EXPOSURE -7				曝光				-9 ~ 0
+CAP_PROP_WHITE_BALANCE_BLUE_U 4000	白平衡			 0 ~ 10000
+CAP_PROP_SHARPNESS 224				銳利度			 0 ~ 255
+CAP_PROP_FOCUS 0					對焦				 0 ~ 255
+CAP_PROP_BACKLIGHT 1				背光				 0 ~ 2
+
+
+-------------------------------------
+
+Manual
+
+CAP_PROP_GAIN 255
+CAP_PROP_EXPOSURE -5
+CAP_PROP_WHITE_BALANCE_BLUE_U 5000
