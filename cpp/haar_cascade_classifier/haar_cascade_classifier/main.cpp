@@ -9,43 +9,72 @@ using namespace cv;
 using namespace std;
 
 int main() {
-	String video = "..\\..\\..\\test_data\\faceocc2.webm";
+	
+	String video = "..\\..\\..\\test_data\\human_detect.mp4";
+	//String video = "..\\..\\..\\test_data\\faceocc2.webm";
 
 	VideoCapture capture(video);
+
 	if (!capture.isOpened()) {
 		cout << "Could not open VideoCapture" << endl;
 		return -1;
 	}
 
 
-	CascadeClassifier faceCascade;
-	String faceCascade_name = "haarcascades_xml\\haarcascade_frontalface_default.xml";
+	CascadeClassifier cascade;
+	//String cascade_name = "haarcascades_xml\\haarcascade_frontalface_default.xml";
+	String cascade_name = "haarcascades_xml\\haarcascade_fullbody.xml";
+	//String cascade_name = "haarcascades_xml\\haarcascade_lowerbody.xml";
+	//String cascade_name = "haarcascades_xml\\haarcascade_upperbody.xml";
 
-	if (!faceCascade.load(faceCascade_name)) {
+
+	if (!cascade.load(cascade_name)) {
 		cout << "Failed to load cascade classifier" << endl;
 		return -1;
 	}
 
 	Mat frame;
+	vector<Rect> rect;
 	while (true) {
+		double t = (double)getTickCount();
+
 		capture >> frame;
 
 		if (frame.empty())
 			break;
 
-		vector<Rect> faces;
+
+		resize(frame, frame, Size(1280, 720));
+		cvtColor(frame, frame, CV_BGR2GRAY);
+		
+		/*
+			image		:	Matrix of the type CV_8U containing an image where objects are detected.
+			objects		:	Vector of rectangles where each rectangle contains the detected object, the rectangles may be partially outside the original image.
+			
+			scaleFactor	:	Parameter specifying how much the image size is reduced at each image scale.
+							每次掃描放大倍率
+
+			minNeighbors:	Parameter specifying how many neighbors each candidate rectangle should have to retain it.
+							構成目標最小相鄰個數
+
+			flags		:	It is not used for a new cascade.
+			minSize		:	Minimum possible object size. Objects smaller than that are ignored.
+			maxSize		:	Maximum possible object size. Objects larger than that are ignored. If maxSize == minSize model is evaluated on single scale.
+		*/
+
+		cascade.detectMultiScale(
+			frame, rect, 1.02, 3, 0, Size(90, 250), Size(300, 600));
 
 
-		faceCascade.detectMultiScale( 
-			frame, faces, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
 
-
-		for (size_t i = 0; i < faces.size(); i++)
-			rectangle(frame, faces[i], Scalar(0, 0, 255), 2);
+		for (size_t i = 0; i < rect.size(); i++)
+			rectangle(frame, rect[i], Scalar(0, 0, 255), 2);
 
 		imshow("output", frame);
 
 
+		t = 1 / (((double)getTickCount() - t) / getTickFrequency());
+		cout << "Frame rate : " << t << endl;
 		waitKey(1);
 	}
 
