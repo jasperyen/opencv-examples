@@ -18,8 +18,8 @@
 >2. [Background Subtraction Algorithm using OpenCV](https://ccw1986.blogspot.tw/2016/03/background-subtraction-algorithm-using.html)
 
 
-* 完整程式碼 (Sample Code) : [GitHub](https://github.com/jasperyen/opencv-examples/blob/master/cpp/Background_Subtraction_MOG2/Background_Subtraction_MOG2/main.cpp)
 * 部落格連結 (Blog Link) : [Blogger](https://jasper1996826.blogspot.tw/2017/04/opencv-background-subtraction_61.html)
+* 完整程式碼 (Sample Code) : [GitHub](https://github.com/jasperyen/opencv-examples/blob/master/cpp/Background_Subtraction_MOG2/Background_Subtraction_MOG2/main.cpp)
 
 ---
 
