@@ -13,7 +13,7 @@ int main() {
 	if (!sender.isConnect())
 		return -1;
 
-	String videoFile = "..\\..\\..\\..\\test_data\\mog2_test.mp4";
+	//String videoFile = "..\\..\\..\\..\\test_data\\mog2_test.mp4";
 	JpegEncoder jencoder(0, true, 100, 1.0);
 
 	if (!jencoder.isCapturing()) {

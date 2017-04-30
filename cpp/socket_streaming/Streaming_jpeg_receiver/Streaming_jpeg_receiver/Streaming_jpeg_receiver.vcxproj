@@ -21,14 +21,11 @@
   <ItemGroup>
     <ClInclude Include="JpegDecoder.h" />
     <ClInclude Include="ReceiverSocket.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JpegDecoder.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ReceiverSocket.cpp" />
-    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7C17585C-F777-42EA-B9CB-014EA1FEEEC9}</ProjectGuid>

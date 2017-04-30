@@ -15,12 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
     <ClInclude Include="JpegDecoder.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
@@ -29,9 +23,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>原始程式檔</Filter>
-    </ClCompile>
     <ClCompile Include="JpegDecoder.cpp">
       <Filter>原始程式檔</Filter>
     </ClCompile>
