@@ -24,8 +24,6 @@ int main() {
 	CascadeClassifier cascade;
 	//String cascade_name = "haarcascades_xml\\haarcascade_frontalface_default.xml";
 	String cascade_name = "haarcascades_xml\\haarcascade_fullbody.xml";
-	//String cascade_name = "haarcascades_xml\\haarcascade_lowerbody.xml";
-	//String cascade_name = "haarcascades_xml\\haarcascade_upperbody.xml";
 
 
 	if (!cascade.load(cascade_name)) {
@@ -33,7 +31,7 @@ int main() {
 		return -1;
 	}
 
-	Mat frame;
+	Mat frame, frame_gray;
 	vector<Rect> rect;
 	while (true) {
 		double t = (double)getTickCount();
@@ -45,7 +43,8 @@ int main() {
 
 
 		resize(frame, frame, Size(1280, 720));
-		cvtColor(frame, frame, CV_BGR2GRAY);
+		cvtColor(frame, frame_gray, CV_BGR2GRAY);
+		equalizeHist(frame_gray, frame_gray);
 		
 		/*
 			image		:	Matrix of the type CV_8U containing an image where objects are detected.
@@ -63,7 +62,7 @@ int main() {
 		*/
 
 		cascade.detectMultiScale(
-			frame, rect, 1.02, 3, 0, Size(90, 250), Size(300, 600));
+			frame_gray, rect, 1.05, 2, 0, Size(80, 160), Size(300, 600));
 
 
 
