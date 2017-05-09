@@ -1,7 +1,6 @@
 
 ## Blog : [Jasper Yen's Blogger](https://jasper1996826.blogspot.tw/2017/05/opencv-example-index.html)
 
----
 
 ## C++ Examples
 
@@ -23,10 +22,8 @@
 - Socket streaming - 影像串流 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/socket_streaming)
 - Write image video - 影像存檔 : [GtiHub](https://github.com/jasperyen/opencv-examples/blob/master/cpp/writeImageVideo/writeImageVideo/main.cpp)
 
----
 
 ## Java Examples
 - Captcha detection - 驗證碼辨識 : [GtiHub](https://github.com/jasperyen/opencv-examples/blob/master/java/CaptchaDetection/src/captchadetection/CaptchaDetection.java)
 - Show Mat - 顯示影像 : [GtiHub](https://github.com/jasperyen/opencv-examples/blob/master/java/showMat/src/showmat/ShowMat.java)
 
----
