@@ -26,7 +26,7 @@ int main() {
 
 	CascadeClassifier cascade;
 	String cascade_name = "haarcascades_xml\\haarcascade_frontalface_default.xml";
-	//String cascade_name = "haarcascades_xml\\haarcascade_frontalface_alt_tree.xml";
+	//String cascade_name = "haarcascades_xml\\haarcascade_profileface.xml";
 
 	if (!cascade.load(cascade_name)) {
 		cout << "Failed to load cascade classifier" << endl;
@@ -98,36 +98,28 @@ int main() {
 		}
 
 		if (large_body != -1) {
-			Mat bodyRoi = frame_gray(large_rect).clone();
+			Mat bodyRoi = frame(large_rect).clone();
 
-			Mat edge;
-			blur(bodyRoi, bodyRoi, Size(7, 7));
-			Canny(bodyRoi, edge, 50, 150, 3);
+			resize(bodyRoi, bodyRoi, cvSize(60, 120));
 
+			Size winSize = Size(60, 60);
+			Size blockSize = Size(20, 20);
+			Size strideSize = Size(10, 10);
+			Size cellSize = Size(5, 5);
+			int bins = 9;
+			//一個Cell有9個方向，共9維
+			//一個Block有16個Cells((20/5)*(20/5))，共144維
+			//一個Window有25個Blocks(((60-20)/10+1)*((60-20)/10+1))，共3600維
+			HOGDescriptor *hog = new  HOGDescriptor(winSize, blockSize, strideSize, cellSize, bins);
+			vector< float >descriptors;//HOG描述向量
+			Size winShiftSize = cvSize(10, 10);//搜尋框移動位置
+			Size paddingSize = cvSize(0, 0);//補滿邊界位置
+			hog->compute(bodyRoi, descriptors, winShiftSize, paddingSize);//調用計算函數  
+			cout << descriptors.size() << endl;
 
-			vector<vector<Point>> contours;
-			vector<Vec4i> hierarchy;
-
-			findContours(edge, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-
-			//cout << contours.size() << endl;
-
-			if (contours.size() == 0)
-				continue;
-
-			int large_index = 0;
-			double large_area = 0;
-			for (int i = 0; i < contours.size(); i++) {
-				double area = contourArea(contours[i]);
-				if (area > large_area)
-					large_index = i;
-			}
-
-			//for (int i = 0; i < contours.size(); i++) 
-			drawContours(edge, contours, large_index, Scalar(255), 2, 8, hierarchy);
-
-			imshow("edge", edge);
+			
 			imshow("bodyRoi", frame(large_rect));
+			imshow("result", bodyRoi);
 		}
 
 		for (size_t i = 0; i < rectFace.size(); i++)
