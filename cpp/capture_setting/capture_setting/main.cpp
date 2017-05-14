@@ -98,18 +98,36 @@ int main() {
 	//settingC905(capture);
 
 	//printAllCaptureSetting(capture);
+	
+	//capture.set(CAP_PROP_FRAME_WIDTH, 1280);
+	//capture.set(CAP_PROP_FRAME_HEIGHT, 720);
+	
 	printLessCaptureSetting(capture);
+	//printAllCaptureSetting(capture);
 
-	capture.set(CAP_PROP_SETTINGS, 1);
+	//capture.set(CAP_PROP_SETTINGS, 1);
 
+	double sec = 0;
+	int frame_sum = 0;
 	while (1) {
+		double t = (double)getTickCount();
+
 		capture >> frame;
+
+		sec += ((double)getTickCount() - t) / getTickFrequency();
+		frame_sum++;
+		if (sec > 1.0) {
+			cout << "Frame rate : " << frame_sum / sec << endl;
+			sec = 0;
+			frame_sum = 0;
+		}
+
 		if (frame.empty())
 			break;
 
-		imshow("Display", frame);
-
-		waitKey(1);
+		
+		//imshow("Display", frame);
+		//waitKey(1);
 	}
 
 	return 0;
