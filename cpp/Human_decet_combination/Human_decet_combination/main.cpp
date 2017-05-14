@@ -30,7 +30,6 @@ int main() {
 	}
 
 
-	Ptr<BackgroundSubtractor> pSub = createBackgroundSubtractorMOG2(10, 32, true);
 
 	Size scale_size(1280, 720);
 
