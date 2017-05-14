@@ -12,7 +12,10 @@ int main() {
 	
 	String video = "..\\..\\..\\test_data\\human_detect.mp4";
 
-	VideoCapture capture(video);
+	VideoCapture capture(0);
+
+	capture.set(CAP_PROP_FRAME_WIDTH, 1280);
+	capture.set(CAP_PROP_FRAME_HEIGHT, 720);
 
 	if (!capture.isOpened()) {
 		cout << "Could not open VideoCapture" << endl;
@@ -34,8 +37,8 @@ int main() {
 
 	Size scale_size(1280, 720);
 
-	double x_scale = 3.0;
-	double y_scale = 9.0;
+	double x_scale = 2.0;
+	double y_scale = 4.0;
 
 
 	Mat frame, frame_gray, fgMask, bgMask;
@@ -49,7 +52,7 @@ int main() {
 			break;
 
 		
-		resize(frame, frame, scale_size);
+		//resize(frame, frame, scale_size);
 
 		//	灰階, 直方圖均等
 		cvtColor(frame, frame_gray, CV_BGR2GRAY);
@@ -57,7 +60,7 @@ int main() {
 
 		//	找人臉, 並存入rectFace
 		cascade.detectMultiScale(
-			frame_gray, rectFace, 1.18, 2, 0, Size(15, 15), Size(45, 45));
+			frame_gray, rectFace, 1.2, 3, 0, Size(50, 50), Size(100, 100));
 
 		recBody.clear();
 
@@ -66,7 +69,7 @@ int main() {
 			double x = rectFace[i].x;
 			x = x - rectFace[i].width * ((x_scale - 1) / 2.0);
 			
-			double y = rectFace[i].y;
+			double y = rectFace[i].y + rectFace[i].height;
 
 			double width = x_scale * rectFace[i].width;
 
@@ -74,9 +77,10 @@ int main() {
 
 
 			if (x < 0) {
-				width += x; 
+				width += x;
 				x = 0;
 			}
+			
 			if (x + width > scale_size.width)
 				width = scale_size.width - x;
 			if (y + height > scale_size.height)
@@ -90,7 +94,7 @@ int main() {
 
 		//	找最大人形
 		Rect large_rect;
-		int large_body = 0;
+		int large_body = -1;
 		for (size_t i = 0; i < recBody.size(); i++) {
 			if (recBody[i].area() > large_body) {
 				large_rect = recBody[i];
@@ -98,7 +102,7 @@ int main() {
 			}
 		}
 
-		if (large_body != 0) {
+		if (large_body != -1) {
 			Mat bodyRoi = frame_gray(large_rect).clone();
 
 			Mat edge;
