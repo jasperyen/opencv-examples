@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <thread>
 #include <math.h>
 
 #include <opencv2/opencv.hpp>
@@ -11,7 +12,10 @@
 using namespace cv;
 using namespace std;
 
+vector<Mat> sampleMat;
 
+void init_sampleMat();
+String go_detect(Mat &src);
 void thres_rgb(Mat src, Mat &gray);
 void k_means_spilter(Mat src, Mat &dst);
 void check_is_line(Mat src, Mat &dst);
@@ -26,13 +30,40 @@ void rotateImage(Mat src, Mat dst, int degree);
 
 
 int main() {
+	init_sampleMat();
 
 	String filename = "..\\..\\..\\test_data\\captcha_data\\01.jpg";
-
 	Mat src = imread(filename);
-
 	imshow("src", src);
 
+	go_detect(src);
+
+	waitKey(0);
+
+	return 0;
+}
+
+void init_sampleMat() {
+
+	//	載入樣本圖片並旋轉
+	for (int i = 0; i < 20; i++) {
+		Mat sample = imread("number_samples\\" + to_string(i) + ".png", IMREAD_GRAYSCALE);
+
+		for (int rota = -90; rota <= 90; rota += 5) {
+			Mat rotateImg = sample.clone();
+			rotateImage(rotateImg, rotateImg, rota);
+			sampleMat.push_back(rotateImg);
+		}
+	}
+}
+
+void rotateImage(Mat src, Mat dst, int degree) {
+	Point2f center(src.cols / 2.0 + 0.5, src.rows / 2.0 + 0.5);
+	Mat M = getRotationMatrix2D(center, degree, 1.0);
+	warpAffine(src, dst, M, src.size());
+}
+
+String go_detect(Mat &src) {
 	Mat src_gray;
 	thres_rgb(src, src_gray);
 
@@ -48,22 +79,19 @@ int main() {
 
 	Mat src_resize;
 	resize(src_gray, src_resize, Size(src_gray.cols * 2, src_gray.rows * 2));
-
-	imshow("src_resize", src_resize);
+	//imshow("src_resize", src_resize);
 
 	vector<Mat> num_roi = find_number(src_resize);
 
 	String answer = dect_number(num_roi);
 
-
-	waitKey(0);
-
-	return 0;
+	return answer;
 }
+
 
 void thres_rgb(Mat src, Mat &gray) {
 
-	gray = Mat::zeros(src.size(), CV_8UC1);
+	gray = Mat::zeros(src.size(), CV_8U);
 
 	//	設定閥值, 過濾背景雜訊
 	int thres = 150;
@@ -98,7 +126,6 @@ void thres_rgb(Mat src, Mat &gray) {
 
 				g_ptr[col / 3] = 255;
 			}
-
 		}
 	}
 
@@ -118,8 +145,8 @@ void delete_target(Mat src, Mat dst_0, Mat dst_1) {
 		}
 	}
 
-	namedWindow("delete_result", WINDOW_NORMAL);
-	imshow("delete_result", src);
+	//namedWindow("delete_result", WINDOW_NORMAL);
+	//imshow("delete_result", src);
 }
 
 void delete_point(Mat src) {
@@ -195,42 +222,41 @@ void k_means_spilter(Mat src, Mat &dst) {
 			int index = row*width + col;
 			int label = labels.at<int>(index, 0);
 
-
+			/*
 			src.at<Vec3b>(row, col)[0] = centers.at<float>(label, 0);
 			src.at<Vec3b>(row, col)[1] = centers.at<float>(label, 1);
 			src.at<Vec3b>(row, col)[2] = centers.at<float>(label, 2);
-
+			*/
 			/*
 			switch (label) {
-			case 0:
-			src.at<Vec3b>(row, col)[0] = 255;
-			src.at<Vec3b>(row, col)[1] = 255;
-			src.at<Vec3b>(row, col)[2] = 255;
-			break;
+				case 0:
+				src.at<Vec3b>(row, col)[0] = 255;
+				src.at<Vec3b>(row, col)[1] = 255;
+				src.at<Vec3b>(row, col)[2] = 255;
+				break;
 
-			case 1:
-			src.at<Vec3b>(row, col)[0] = 255;
-			src.at<Vec3b>(row, col)[1] = 0;
-			src.at<Vec3b>(row, col)[2] = 0;
-			break;
+				case 1:
+				src.at<Vec3b>(row, col)[0] = 255;
+				src.at<Vec3b>(row, col)[1] = 0;
+				src.at<Vec3b>(row, col)[2] = 0;
+				break;
 
-			case 2:
-			src.at<Vec3b>(row, col)[0] = 0;
-			src.at<Vec3b>(row, col)[1] = 255;
-			src.at<Vec3b>(row, col)[2] = 0;
-			break;
+				case 2:
+				src.at<Vec3b>(row, col)[0] = 0;
+				src.at<Vec3b>(row, col)[1] = 255;
+				src.at<Vec3b>(row, col)[2] = 0;
+				break;
 			}
 			*/
 
-			if (label == line_index) {
+			if (label == line_index)
 				dst.at<uchar>(row, col) = 255;
-			}
 		}
 	}
-
+	/*
 	namedWindow("kmeans_spilt", WINDOW_NORMAL);
 	imshow("kmeans_spilt", dst);
-
+	*/
 	/*
 	namedWindow("kmeans_result", WINDOW_NORMAL);
 	imshow("kmeans_result", src);
@@ -293,9 +319,10 @@ void check_is_line(Mat src, Mat &dst) {
 				dst.at<uchar>(row, col) = 255;
 		}
 	}
-
+	/*
 	namedWindow("check_result", WINDOW_NORMAL);
 	imshow("check_result", dst);
+	*/
 }
 
 int col_length(Mat src, int dst_row, int dst_col) {
@@ -315,7 +342,6 @@ int col_length(Mat src, int dst_row, int dst_col) {
 	}
 
 	//cout << length << endl;
-
 	return length;
 }
 
@@ -336,7 +362,6 @@ int row_length(Mat src, int dst_row, int dst_col) {
 	}
 
 	//cout << length << endl;
-
 	return length;
 }
 
@@ -350,7 +375,7 @@ vector<Mat> find_number(Mat src) {
 	blur(src_tmp, src_tmp, Size(3, 3));
 	Canny(src_tmp, edge, 50, 150, 3);
 
-	imshow("edge", edge);
+	//imshow("edge", edge);
 
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
@@ -358,12 +383,12 @@ vector<Mat> find_number(Mat src) {
 	//	尋找邊緣
 	findContours(edge, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
-	cout << contours.size() << endl;
+	//cout << contours.size() << endl;
 
-	for (int i = 0; i<contours.size(); i++) {
-		Scalar color = Scalar(128);
-		drawContours(src_tmp, contours, i, color, 2, 8, hierarchy);
-	}
+	//	描繪邊緣
+	//for (int i = 0; i<contours.size(); i++)
+		//drawContours(src_tmp, contours, i, Scalar(128), 2, 8, hierarchy);
+	
 
 
 	vector<vector<Point> > contours_poly(contours.size());
@@ -374,18 +399,17 @@ vector<Mat> find_number(Mat src) {
 		approxPolyDP(Mat(contours[i]), contours_poly[i], 3, true);
 		Rect rect = boundingRect(Mat(contours_poly[i]));
 
-		if (rect.area() > 300)
-			cout << "h : " << rect.height << ", w : " << rect.width << ", aera :  " << rect.area() << endl;
+		//if (rect.area() > 300)
+			//cout << "h : " << rect.height << ", w : " << rect.width << ", aera :  " << rect.area() << endl;
 
 		if (rect.height >= 21 && rect.width >= 21 && rect.area() >= 700)
 			boundRect.push_back(rect);
 	}
 
 	//	將該範圍標註起來
-	for (int i = 0; i< boundRect.size(); i++) {
-		Scalar color = Scalar(128);
-		rectangle(src_tmp, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
-	}
+	//for (int i = 0; i< boundRect.size(); i++)
+		//rectangle(src_tmp, boundRect[i].tl(), boundRect[i].br(), Scalar(128), 2, 8, 0);
+	
 
 	sort(boundRect.begin(), boundRect.end(), rect_cmp_by_center);
 
@@ -399,8 +423,8 @@ vector<Mat> find_number(Mat src) {
 	}
 
 
-	namedWindow("find_number_result", WINDOW_NORMAL);
-	imshow("find_number_result", src_tmp);
+	//namedWindow("find_number_result", WINDOW_NORMAL);
+	//imshow("find_number_result", src_tmp);
 
 	return numRoi;
 }
@@ -413,18 +437,9 @@ bool rect_cmp_by_center(Rect a, Rect b) {
 }
 
 String dect_number(vector<Mat> src) {
-
-	vector<Mat> sampleMat;
 	String answer = "";
 
-	cout << fixed << setprecision(2);
-
-	for (int i = 0; i < 20; i++) {
-		sampleMat.push_back(imread("number_samples\\" + to_string(i) + ".png", IMREAD_GRAYSCALE));
-	}
-
-
-	//	透過旋轉 比對出相似度最高之圖片
+	//	比對出相似度最高之圖片
 	for (int num = 0; num < src.size(); num++) {
 		Mat numRoi = src[num];
 
@@ -433,43 +448,32 @@ String dect_number(vector<Mat> src) {
 
 		double matchMin = DBL_MAX;
 		int matchSample = -1;
-		int matchRoate = 360;
 
-		for (int sam = 0; sam < sampleMat.size(); sam++) {
-			for (int rota = -90; rota <= 90; rota += 5) {
-				Mat rotateImg = sampleMat[sam].clone();
-				rotateImage(rotateImg, rotateImg, rota);
+		for (int i = 0; i < sampleMat.size(); i++) {
+			Mat rotateImg = sampleMat[i];
 
-				int result_cols = zoomNum.cols - rotateImg.cols + 1;
-				int result_rows = zoomNum.rows - rotateImg.rows + 1;
-				Mat resultImg(result_rows, result_cols, CV_32FC1);
+			int result_cols = zoomNum.cols - rotateImg.cols + 1;
+			int result_rows = zoomNum.rows - rotateImg.rows + 1;
+			Mat resultImg(result_rows, result_cols, CV_32FC1);
 
-				matchTemplate(zoomNum, rotateImg, resultImg, CV_TM_SQDIFF);
+			matchTemplate(zoomNum, rotateImg, resultImg, CV_TM_SQDIFF);
 
-				double minVal;
-				Point minLoc;
-				minMaxLoc(resultImg, &minVal, NULL, &minLoc, NULL, Mat());
+			double minVal;
+			Point minLoc;
+			minMaxLoc(resultImg, &minVal, NULL, &minLoc, NULL, Mat());
 
-				if (matchMin > minVal) {
-					matchMin = minVal;
-					matchSample = sam;
-					matchRoate = rota;
-				}
+			if (matchMin > minVal) {
+				matchMin = minVal;
+				matchSample = i/37;
 			}
 		}
 
 		answer = answer + to_string(matchSample / 2);
-		cout << "num_" << to_string(num) << "\tmatch sample : " << to_string(matchSample)
-			<< "\tmatch roate : " << to_string(matchRoate) << "\tmatch value : " << matchMin << endl;
+		//cout << "num_" << to_string(num) << "\tmatch sample : " << to_string(matchSample)
+			 //<< "\tmatch value : " << matchMin << endl;
 
 	}
 	cout << "answer is : " << answer << endl;
 
 	return answer;
-}
-
-void rotateImage(Mat src, Mat dst, int degree) {
-	Point2f center(src.cols / 2.0 + 0.5, src.rows / 2.0 + 0.5);
-	Mat M = getRotationMatrix2D(center, degree, 1.0);
-	warpAffine(src, dst, M, src.size());
 }
