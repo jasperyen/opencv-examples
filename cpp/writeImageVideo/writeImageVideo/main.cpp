@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <time.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -9,6 +10,10 @@ using namespace std;
 using namespace cv;
 
 int main() {
+	struct tm *T;
+	time_t t;
+	time(&t);
+
 
 	vector<int> compression_params;
 	compression_params.push_back(IMWRITE_PNG_COMPRESSION);
@@ -40,19 +45,24 @@ int main() {
 		if (writer.isOpened())
 			writer.write(frame);
 
-
 		if (key == 'i') {
-			imwrite("out.png", frame, compression_params);
-			cout << "image saved!" << endl;
+			T = localtime(&t);
+			String filename = to_string(T->tm_mon + 1) + "-" + to_string(T->tm_mday)
+				+ "-" + to_string(T->tm_hour) + "-" + to_string(T->tm_min) + "-" + to_string(T->tm_sec) + ".png";
+
+			imwrite(filename, frame, compression_params);
+			cout << "image saved : " << filename << endl;
 		}
 		else if (key == 'v') {
 			if (!writer.isOpened()) {
-				cout << "start recording!" << endl;
-
-				writer.open("out.avi", CV_FOURCC('D', 'I', 'V', 'X'), 25.0, Size(width, height), true);
+				T = localtime(&t);
+				String filename = to_string(T->tm_mon + 1) + "-" + to_string(T->tm_mday)
+					+ "-" + to_string(T->tm_hour) + "-" + to_string(T->tm_min) + "-" + to_string(T->tm_sec) + ".avi";
+				
+				cout << "start recording : " << filename << endl;
+				writer.open(filename, CV_FOURCC('D', 'I', 'V', 'X'), 25.0, Size(width, height), true);
 			}
 			else {
-				//isRecoding = false;
 				cout << "stop recording, video saved!" << endl;
 				writer.release();
 			}
