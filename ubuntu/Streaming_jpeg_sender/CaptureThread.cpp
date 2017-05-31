@@ -33,6 +33,7 @@ Size CaptureThread::getFrameSize() {
 }
 
 void CaptureThread::startCapture() {
+	capturing = true;
 	cap_thread = new thread(&CaptureThread::goCapture, this);
 }
 
@@ -43,7 +44,6 @@ void CaptureThread::goCapture() {
 	double sec = 0;
 	int frame_sum = 0;
 	unique_lock<mutex> locker(queue_mutex, defer_lock);
-	capturing = true;
 
 	while (capturing) {
 		double t = (double)getTickCount();
