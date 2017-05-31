@@ -2,110 +2,77 @@
 #include <iostream>
 #include <queue>
 #include <thread>
+#include <mutex>
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
+
+#include "CaptureThread.h"
+#include "CascadeThread.h"
 
 using namespace cv;
 using namespace std;
 
-queue<Mat> frame_queue;
-VideoCapture capture;
-
-void captureThread() {
-	Mat frame;
-
-	double sec = 0;
-	int frame_sum = 0;
-	while (true) {
-		double t = (double)getTickCount();
-
-		capture >> frame;
-
-		sec += ((double)getTickCount() - t) / getTickFrequency();
-		frame_sum++;
-		if (sec > 1.0) {
-			cout << "Real frame rate : " << frame_sum / sec << endl;
-			sec = 0;
-			frame_sum = 0;
-		}
-
-		if (frame.empty())
-			break;
-
-		while (frame_queue.size() > 5)
-			frame_queue.pop();
-
-		frame_queue.push(frame);
-	}
-
-}
 
 int main(int argc, char **argv) {
 
-	if (argc > 1)
-		capture.open(atoi(argv[1]));
-	else
-		capture.open(0);
+	mutex queue_mutex;
+	queue<Mat> result_queue;
 
-	if (!capture.isOpened()) {
-		cout << "Could not open VideoCapture" << endl;
-		return -1;
+	int thread_count = 2;
+
+	VideoCapture capture(0);
+
+	CaptureThread cap_thread(capture);
+
+	vector<CascadeThread*> thread_vector;
+	for (int i = 0; i < thread_count; i++) {
+		CascadeThread *cas_thread = new CascadeThread(cap_thread, result_queue, queue_mutex);
+		thread_vector.push_back(cas_thread);
 	}
 
-	CascadeClassifier cascade;
-	String cascade_name = "haarcascade_frontalface_default.xml";
-
-	if (!cascade.load(cascade_name)) {
-		cout << "Failed to load cascade classifier" << endl;
-		return -1;
+	cap_thread.startCapture();
+	
+	for (int i = 0; i < thread_count; i++) {
+		thread_vector[i]->start_thread();
 	}
 
-
-	if (argc > 3) {
-		capture.set(CV_CAP_PROP_FRAME_WIDTH, atoi(argv[2]));
-		capture.set(CV_CAP_PROP_FRAME_HEIGHT, atoi(argv[3]));
-	}
-
-	thread cap_thread(captureThread);
-
-
-	Mat frame, frame_gray;
-	vector<Rect> rect;
+	unique_lock<mutex> locker(queue_mutex, defer_lock);
+	
+	Mat frame;
 	double sec = 0;
 	int frame_sum = 0;
+	
 	while (true) {
-		if (frame_queue.empty())
-			continue;
-
 		double t = (double)getTickCount();
 
-		frame = frame_queue.front();
-		frame_queue.pop();
-
-		if (frame.empty())
-			break;
-
-
-		cvtColor(frame, frame_gray, CV_BGR2GRAY);
-		equalizeHist(frame_gray, frame_gray);
-
-		cascade.detectMultiScale(
-			frame_gray, rect, 1.25, 2, 0, Size(50, 50), Size(100, 100));
-
-		for (size_t i = 0; i < rect.size(); i++)
-			rectangle(frame, rect[i], Scalar(0, 0, 255), 2);
-
-		imshow("output", frame);
-
+		locker.lock();
+		while (true) {
+			if (!result_queue.empty()) {
+				frame = result_queue.front();
+				result_queue.pop();
+				break;
+			}
+			else {
+				locker.unlock();
+				this_thread::sleep_for(chrono::duration<int, std::milli>(5));
+				locker.lock();
+			}
+		}
+		locker.unlock();
 
 		sec += ((double)getTickCount() - t) / getTickFrequency();
 		frame_sum++;
 		if (sec > 1.0) {
-			cout << "Calculate frame rate : " << frame_sum / sec << endl;
+			cout << "Cal frame rate : " << frame_sum / sec << endl;
 			sec = 0;
 			frame_sum = 0;
 		}
+
+		imshow("output", frame);
 		waitKey(1);
 	}
 
