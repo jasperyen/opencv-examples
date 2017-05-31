@@ -13,27 +13,24 @@ int main() {
 	if (!sender.isConnect())
 		return -1;
 
-	//String videoFile = "..\\..\\..\\..\\test_data\\mog2_test.mp4";
-	JpegEncoder jencoder(0, true, 100, 1.0);
+	VideoCapture capture(0);
 
-	if (!jencoder.isCapturing()) {
-		cout << "視訊擷取失敗" << endl;
-		return -1;
-	}
+	CaptureThread capthread(capture);
+
+	JpegEncoder jencoder(capthread, false, 100, 1.0);
+
+	capthread.startCapture();
 
 	vector<unsigned char> data;
-	while (jencoder.isCapturing()) {
-		
-		data = jencoder.GetJpegPackageFromCapture();
-		
-		if (data.empty())
+	while (capthread.isCapturing()) {
+		if (!jencoder.getJpegPackage(data))
 			break;
 
 		if (!sender.sendPacket(data))
 			break;
-		
-		waitKey(1);
 	}
+
+	cout << "out" << endl;
 
     return 0;
 }

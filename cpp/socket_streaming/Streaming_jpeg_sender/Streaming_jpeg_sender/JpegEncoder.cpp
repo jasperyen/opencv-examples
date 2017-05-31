@@ -4,78 +4,61 @@
 using namespace std;
 using namespace cv;
 
-JpegEncoder::JpegEncoder(const bool show, const int quality, const float s) {
-	capture.open(0);
-	if (!capture.isOpened())
-		return;
-	initialization(show, quality, s);
-}
+JpegEncoder::JpegEncoder(CaptureThread &cap, const bool show, const int quality, const float scale) {
 
-JpegEncoder::JpegEncoder(const int c, const bool show, const int quality, const float s) {
-	capture.open(c);
-	if (!capture.isOpened())
-		return;
-	initialization(show, quality, s);
-}
+	capture = &cap;
 
-JpegEncoder::JpegEncoder(const string str, const bool show, const int quality, const float s) {
-	capture.open(str);
-	if (!capture.isOpened())
-		return;
-	initialization(show, quality, s);
-}
+	showCapture = show;
 
-void JpegEncoder::initialization(const bool show, const int quality, const float s) {
-	if (showVideo)
+	if (showCapture)
 		namedWindow("Sender capture", WINDOW_AUTOSIZE);
 
-	showVideo = show;
 
-	jpegQuality = quality;
+	originalSize = capture->getFrameSize();
 
-	scale = s;
+	if (scale < 1.0 && scale > 0.0)
+		scaleSize = Size((int)(originalSize.width * scale), (int)(originalSize.height * scale));
+	else
+		scaleSize = originalSize;
+
+
+	compression_params = {
+		IMWRITE_JPEG_QUALITY, quality
+	};
 }
 
-const vector<unsigned char> JpegEncoder::GetJpegFromCapture() {
-	vector<unsigned char> data;
+bool JpegEncoder::getJpegData(vector<unsigned char> &data) {
 	Mat frame;
 	
-	capture >> frame;
+	if (capture->isCapturing()) {
+		while (!capture->getFrame(frame)) {
+			this_thread::sleep_for(chrono::duration<int, std::milli>(5));
+			//cout << "wait frame" << endl;
+		}
+	}
+	else
+		return false;
 
-	if (frame.empty())
-		return data;
-
-	if ( showVideo )
+	if (showCapture) {
 		imshow("Sender capture", frame);
-
-	if (scale < 1.0) {
-		Size original_size = frame.size();
-		Size new_size((int)(original_size.width * scale), (int)(original_size.height * scale));
-		resize(frame, frame, new_size);
+		waitKey(1);
 	}
 
-	vector<int> compression_params = {
-		IMWRITE_JPEG_QUALITY, jpegQuality
-	};
+	if (scaleSize != originalSize) 
+		resize(frame, frame, scaleSize);
+
 
 	imencode(".jpg", frame, data, compression_params);
 	
-	
-	/*
-	unsigned char c = 0;
-	for (int i = 0; i < 256; i++, c++) {
-		data.push_back(c);
-	}
-	*/
-	return data;
+
+	return true;
 }
 
-const vector<unsigned char> JpegEncoder::GetJpegPackageFromCapture() {
+bool JpegEncoder::getJpegPackage(vector<unsigned char> &data) {
 
-	vector<unsigned char> data = JpegEncoder::GetJpegFromCapture();
+	if (!getJpegData(data))
+		return false;
 
-	if (data.empty())
-		return data;
 
 	for (int i = 0; i < sizeof(unsigned int); i++)
 		data.insert(data.begin(), 0);
@@ -87,9 +70,6 @@ const vector<unsigned char> JpegEncoder::GetJpegPackageFromCapture() {
 
 	memcpy(ptr, i, sizeof(unsigned int));
 
-	return data;
+	return true;
 }
 
-bool JpegEncoder::isCapturing() {
-	return capture.isOpened();
-}
