@@ -28,12 +28,13 @@ private :
 	queue<vector<unsigned char>> jpeg_queue;
 	thread *encode_thread;
 	int max_queue_size = 5;
+	bool showCapture;
 	bool encoding = false;
 	void encodeJpegPackage(Mat&, vector<unsigned char>&);
 	void goEncode();
 
 public :
-	JpegEncoder(CaptureThread&, const int, const float);
+	JpegEncoder(CaptureThread&, const bool, const int, const float);
 	~JpegEncoder();
 	void startJpegEncode();
 	bool getJpegPackage(vector<unsigned char>&);

@@ -3,10 +3,24 @@
 
 CaptureThread::CaptureThread(VideoCapture &cap) {
 
-	capture = &cap;
+	spec = VIDEOCAPTURE;
+	videocapture = &cap;
 
-	if (!capture->isOpened()) {
+	if (!videocapture->isOpened()) {
 		cout << "Could not open VideoCapture" << endl;
+		exit(EXIT_FAILURE);
+	}
+
+	printLessCaptureSetting();
+}
+
+CaptureThread::CaptureThread(raspicam::RaspiCam_Cv &cap) {
+
+	spec = RASPICAM;
+	raspicam_cv = &cap;
+
+	if (!raspicam_cv->isOpened()) {
+		cout << "Could not open RaspiCam" << endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -20,16 +34,38 @@ CaptureThread::~CaptureThread() {
 }
 
 void CaptureThread::printLessCaptureSetting() {
+	switch (spec) {
 
-	cout << "CAP_PROP_FRAME_WIDTH" << "\t\t" << capture->get(CAP_PROP_FRAME_WIDTH) << endl;
-	cout << "CAP_PROP_FRAME_HEIGHT" << "\t\t" << capture->get(CAP_PROP_FRAME_HEIGHT) << endl;
-	cout << "CV_CAP_PROP_FPS" << "\t\t\t" << capture->get(CV_CAP_PROP_FPS) << endl;
+		case VIDEOCAPTURE :
+			cout << "CAP_PROP_FRAME_WIDTH" << "\t\t" << videocapture->get(CAP_PROP_FRAME_WIDTH) << endl;
+			cout << "CAP_PROP_FRAME_HEIGHT" << "\t\t" << videocapture->get(CAP_PROP_FRAME_HEIGHT) << endl;
+			cout << "CV_CAP_PROP_FPS" << "\t\t\t" << videocapture->get(CV_CAP_PROP_FPS) << endl;
+			break;
 
+		case RASPICAM :
+			cout << "CAP_PROP_FRAME_WIDTH" << "\t\t" << raspicam_cv->get(CAP_PROP_FRAME_WIDTH) << endl;
+			cout << "CAP_PROP_FRAME_HEIGHT" << "\t\t" << raspicam_cv->get(CAP_PROP_FRAME_HEIGHT) << endl;
+			cout << "CV_CAP_PROP_FPS" << "\t\t\t" << raspicam_cv->get(CV_CAP_PROP_FPS) << endl;
+			break;
+	}
 }
 
 Size CaptureThread::getFrameSize() {
-	return Size(capture->get(CV_CAP_PROP_FRAME_WIDTH),
-				capture->get(CV_CAP_PROP_FRAME_HEIGHT));
+	Size frame_size;
+
+	switch (spec) {
+		case VIDEOCAPTURE :
+			frame_size = Size(videocapture->get(CV_CAP_PROP_FRAME_WIDTH),
+									videocapture->get(CV_CAP_PROP_FRAME_HEIGHT));
+			break;
+
+		case RASPICAM :
+			frame_size = Size(raspicam_cv->get(CV_CAP_PROP_FRAME_WIDTH),
+									raspicam_cv->get(CV_CAP_PROP_FRAME_HEIGHT));
+			break;
+	}
+
+	return frame_size;
 }
 
 void CaptureThread::startCapture() {
@@ -48,7 +84,16 @@ void CaptureThread::goCapture() {
 	while (capturing) {
 		double t = (double)getTickCount();
 
-		*capture >> frame;
+		switch (spec) {
+			case VIDEOCAPTURE :
+				*videocapture >> frame;
+				break;
+
+			case RASPICAM :
+				raspicam_cv->grab();
+				raspicam_cv->retrieve(frame);
+				break;
+		}
 
 		sec += ((double)getTickCount() - t) / getTickFrequency();
 		frame_sum++;

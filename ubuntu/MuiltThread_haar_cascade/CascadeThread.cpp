@@ -32,11 +32,11 @@ void CascadeThread::goCascade() {
 	while (keepRuning) {
 		while (!capture->getFrame(frame)) {
 			this_thread::sleep_for(chrono::duration<int, std::milli>(5));
-			//cout << "wait frame" << endl;
+			cout << "wait frame" << endl;
 		}
-		
+
 		cout << "Get work in thread id : " << this_thread::get_id() << endl;
-		
+
 
 		cvtColor(frame, frame_gray, CV_BGR2GRAY);
 		equalizeHist(frame_gray, frame_gray);

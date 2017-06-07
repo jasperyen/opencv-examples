@@ -4,9 +4,15 @@
 using namespace std;
 using namespace cv;
 
-JpegEncoder::JpegEncoder(CaptureThread &cap, const int quality, const float scale) {
+JpegEncoder::JpegEncoder(CaptureThread &cap, const bool show, const int quality, const float scale) {
 
 	capture = &cap;
+
+	showCapture = show;
+
+	if (showCapture)
+		namedWindow("Sender capture", WINDOW_AUTOSIZE);
+
 
 	originalSize = capture->getFrameSize();
 
@@ -45,6 +51,10 @@ void JpegEncoder::goEncode() {
 			cout << "wait frame" << endl;
 		}
 
+		if (showCapture) {
+			imshow("Sender capture", frame);
+			waitKey(1);
+		}
 
 		double t = (double)getTickCount();
 
@@ -78,7 +88,7 @@ void JpegEncoder::encodeJpegPackage(Mat &frame, vector<unsigned char> &data) {
 		resize(frame, frame, scaleSize);
 
 	imencode(".jpg", frame, data, compression_params);
-	
+
 
 	for (int i = 0; i < sizeof(unsigned int); i++)
 		data.insert(data.begin(), 0);

@@ -12,13 +12,18 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
+#include <raspicam/raspicam_cv.h>
+
 using namespace std;
 using namespace cv;
 
 class CaptureThread {
 
 private :
-	VideoCapture *capture;
+	enum CAPTURE_SPEC {VIDEOCAPTURE, RASPICAM};
+	CAPTURE_SPEC spec;
+	VideoCapture *videocapture;
+	raspicam::RaspiCam_Cv *raspicam_cv;
 	thread *cap_thread;
 	mutex queue_mutex;
 	queue<Mat> frame_queue;
@@ -27,8 +32,9 @@ private :
 	void printLessCaptureSetting();
 	void goCapture();
 
-public : 
+public :
 	CaptureThread(VideoCapture &capture);
+	CaptureThread(raspicam::RaspiCam_Cv &capture);
 	~CaptureThread();
 	void startCapture();
 	bool isCapturing();
