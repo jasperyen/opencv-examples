@@ -1,12 +1,17 @@
-
 #include "JpegEncoder.h"
 
 using namespace std;
 using namespace cv;
 
-JpegEncoder::JpegEncoder(CaptureThread &cap, const int quality, const float scale) {
+JpegEncoder::JpegEncoder(CaptureThread &cap, const bool show, const int quality, const float scale) {
 
 	capture = &cap;
+
+	showCapture = show;
+
+	if (showCapture)
+		namedWindow("Sender capture", WINDOW_AUTOSIZE);
+
 
 	originalSize = capture->getFrameSize();
 
@@ -33,7 +38,7 @@ void JpegEncoder::startJpegEncode() {
 
 void JpegEncoder::goEncode() {
 	Mat frame;
-	vector<unsigned char> data;
+	vector<unsigned char> *data;
 
 	double sec = 0;
 	int frame_sum = 0;
@@ -42,13 +47,17 @@ void JpegEncoder::goEncode() {
 	while (encoding) {
 		while (!capture->getFrame(frame)) {
 			this_thread::sleep_for(chrono::duration<int, std::milli>(5));
-			cout << "wait frame" << endl;
+			//cout << "wait frame" << endl;
 		}
 
+		if (showCapture) {
+			imshow("Sender capture", frame);
+			waitKey(1);
+		}
 
 		double t = (double)getTickCount();
 
-		encodeJpegPackage(frame, data);
+		encodeJpegPackage(frame, &data);
 
 		sec += ((double)getTickCount() - t) / getTickFrequency();
 		frame_sum++;
@@ -62,43 +71,49 @@ void JpegEncoder::goEncode() {
 
 		while (jpeg_queue.size() > max_queue_size) {
 			cout << "loss jpeg package" << endl;
+			vector<unsigned char> *loss_data = jpeg_queue.front();
 			jpeg_queue.pop();
+			delete loss_data;
 		}
 
+		//double s = (double)getTickCount();
 		jpeg_queue.push(data);
+		//cout << "push time" << ((double)getTickCount() - s) / getTickFrequency() << endl;
 
 		locker.unlock();
 	}
 
 }
 
-void JpegEncoder::encodeJpegPackage(Mat &frame, vector<unsigned char> &data) {
+void JpegEncoder::encodeJpegPackage(Mat &frame, vector<unsigned char>  **data_ptr) {
+	vector<unsigned char> *data = new vector<unsigned char>;
 
-	if (scaleSize != originalSize) 
+	if (scaleSize != originalSize)
 		resize(frame, frame, scaleSize);
 
-	imencode(".jpg", frame, data, compression_params);
-	
+	imencode(".jpg", frame, *data, compression_params);
+
 
 	for (int i = 0; i < sizeof(unsigned int); i++)
-		data.insert(data.begin(), 0);
+		data->insert(data->begin(), 0);
 
 	unsigned int i[1];
-	i[0] = data.size();
-	unsigned char *ptr = data.data();
+	i[0] = data->size();
+	unsigned char *ptr = data->data();
 
 	memcpy(ptr, i, sizeof(unsigned int));
 
+	*data_ptr = data;
 }
 
-bool JpegEncoder::getJpegPackage(vector<unsigned char> &data) {
+bool JpegEncoder::getJpegPackage(vector<unsigned char> **data_ptr) {
 
 	unique_lock<mutex> locker(queue_mutex);
 
 	if (jpeg_queue.empty())
 		return false;
 
-	data = jpeg_queue.front();
+	*data_ptr = jpeg_queue.front();
 	jpeg_queue.pop();
 
 	return true;

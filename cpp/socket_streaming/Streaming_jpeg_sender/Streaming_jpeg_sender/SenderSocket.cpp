@@ -1,4 +1,3 @@
-
 #include "SenderSocket.h"
 
 using namespace std;
@@ -51,7 +50,7 @@ bool SenderSocket::sendPacket(vector<unsigned char> data) {
 		return false;
 	}
 	
-	cout << "Send package " << ++packageCount << "\tSize : " << sendbytes << endl;
+	//cout << "Send package " << ++packageCount << "\tSize : " << sendbytes << endl;
 	return true;
 }
 

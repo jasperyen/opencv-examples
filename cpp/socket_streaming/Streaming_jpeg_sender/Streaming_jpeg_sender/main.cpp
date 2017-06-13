@@ -13,31 +13,28 @@ int main() {
 	if (!sender.isConnect())
 		return -1;
 
-	VideoCapture capture(1);
-	capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
-	capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
-
+	VideoCapture capture(0);
 
 	CaptureThread capthread(capture);
 
-	JpegEncoder jencoder(capthread, 60, 1.0);
+	JpegEncoder jencoder(capthread, false, 60, 1.0);
 
 	capthread.startCapture();
 	jencoder.startJpegEncode();
 
-	vector<unsigned char> data;
+	vector<unsigned char> *data;
 	while (capthread.isCapturing()) {
 
-		while (!jencoder.getJpegPackage(data)) {
+		while (!jencoder.getJpegPackage(&data)) {
 			this_thread::sleep_for(chrono::duration<int, std::milli>(5));
 			//cout << "wait jpge data" << endl;
 		}
 
-		if (!sender.sendPacket(data))
+		if (!sender.sendPacket(*data))
 			break;
-	}
 
-	cout << "out" << endl;
+		delete data;
+	}
 
     return 0;
 }

@@ -1,3 +1,6 @@
+#ifndef JPEGENCODER_H
+#define JPEGENCODER_H
+
 #pragma once
 
 #include <stdio.h>
@@ -19,24 +22,27 @@ using namespace cv;
 
 class JpegEncoder {
 
-private :
+private:
 	CaptureThread *capture;
 	Size originalSize;
 	Size scaleSize;
 	vector<int> compression_params;
 	mutex queue_mutex;
-	queue<vector<unsigned char>> jpeg_queue;
+	queue<vector<unsigned char>*> jpeg_queue;
 	thread *encode_thread;
 	int max_queue_size = 5;
+	bool showCapture;
 	bool encoding = false;
-	void encodeJpegPackage(Mat&, vector<unsigned char>&);
+	void encodeJpegPackage(Mat&, vector<unsigned char>**);
 	void goEncode();
 
-public :
-	JpegEncoder(CaptureThread&, const int, const float);
+public:
+	JpegEncoder(CaptureThread&, const bool, const int, const float);
 	~JpegEncoder();
 	void startJpegEncode();
-	bool getJpegPackage(vector<unsigned char>&);
+	bool getJpegPackage(vector<unsigned char>**);
 	bool isEncoding();
 
 };
+
+#endif

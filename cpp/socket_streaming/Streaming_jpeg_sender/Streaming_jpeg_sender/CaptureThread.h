@@ -1,3 +1,6 @@
+#ifndef CAPTURETHREAD_H
+#define CAPTURETHREAD_H
+
 #pragma once
 
 #include <stdio.h>
@@ -35,3 +38,5 @@ public :
 	Size getFrameSize();
 	bool getFrame(Mat &frame);
 };
+
+#endif

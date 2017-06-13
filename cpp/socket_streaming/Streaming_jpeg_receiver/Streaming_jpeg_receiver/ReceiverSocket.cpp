@@ -1,4 +1,3 @@
-
 #include "ReceiverSocket.h"
 
 using namespace std;
@@ -72,6 +71,7 @@ void ReceiverSocket::recvThread() {
 	int recvbytes;
 	int bytes = 0;
 	vector<unsigned char> data;
+	unique_lock<mutex> locker(queue_mutex, defer_lock);
 
 	clock_t last_c, now_c;
 	double duration;
@@ -120,7 +120,10 @@ void ReceiverSocket::recvThread() {
 
 
 				data.assign(buffer + sizeof(unsigned int), buffer + bytes);
+
+				locker.lock();
 				dataQue.push_back(data);
+				locker.unlock();
 
 				datasize[0] = 0;
 				bytes = 0;
@@ -137,7 +140,10 @@ void ReceiverSocket::recvThread() {
 					<< "\t§Y®ÉºÕ¼Æ : " << setw(5) << (1 / duration) << endl;
 
 				data.assign(buffer + sizeof(unsigned int), buffer + datasize[0]);
+
+				locker.lock();
 				dataQue.push_back(data);
+				locker.unlock();
 
 				//cout << "Remove buffer direction !" << endl;
 				for (int i = 0; i < (bytes - datasize[0]); i++) {
@@ -158,10 +164,16 @@ void ReceiverSocket::recvThread() {
 	}
 }
 
-vector<unsigned char> ReceiverSocket::getFrontData() {
-	vector<unsigned char> data = dataQue.front();
+bool ReceiverSocket::getFrontData(vector<unsigned char> &data) {
+	unique_lock<mutex> locker(queue_mutex);
+
+	if (dataQue.empty())
+		return false;
+
+	data = dataQue.front();
 	dataQue.pop_front();
-	return data;
+
+	return true;
 }
 
 bool ReceiverSocket::isConnect() {

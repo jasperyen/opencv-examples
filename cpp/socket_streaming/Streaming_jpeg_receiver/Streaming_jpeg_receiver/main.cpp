@@ -16,11 +16,14 @@ int main() {
 	vector<unsigned char> data;
 
 
-	while (receiver.haveData() || receiver.isConnect()) {
-		if (!receiver.haveData())
-			continue;
+	while (receiver.isConnect()) {
 
-		data = receiver.getFrontData();
+		double t = (double)getTickCount();
+		while (!receiver.getFrontData(data)) {
+			this_thread::sleep_for(chrono::duration<int, std::milli>(5));
+			//cout << "wait receive data" << endl;
+		}
+
 		jdecoder.showJpeg(data);
 	}
 

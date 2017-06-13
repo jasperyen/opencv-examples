@@ -1,3 +1,6 @@
+#ifndef SENDERSOCKET_H
+#define SENDERSOCKET_H
+
 #pragma once
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -26,3 +29,5 @@ public:
 	bool isConnect();
 
 };
+
+#endif
