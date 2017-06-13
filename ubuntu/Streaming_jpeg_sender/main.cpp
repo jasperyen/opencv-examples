@@ -1,26 +1,32 @@
-// main.cpp : 定義主控台應用程式的進入點。
-//
-
 #include "SenderSocket.h"
 #include "JpegEncoder.h"
+#include "CaptureThread.h"
 
 using namespace std;
 
 
 int main() {
-	SenderSocket sender("127.0.0.1", 777);
+	SenderSocket sender("192.168.3.110", 777);
 
 	if (!sender.isConnect())
 		return -1;
 
-	VideoCapture capture(0);
-	capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
-	capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+	//VideoCapture capture(0);
+	//capture.set(CV_CAP_PROP_FPS, 60);
+	//capture.set(CAP_PROP_FRAME_WIDTH, 640);
+	//capture.set(CAP_PROP_FRAME_HEIGHT, 480);
 
+	raspicam::RaspiCam_Cv capture;
+	capture.set(CV_CAP_PROP_FPS, 60);
+	capture.set(CAP_PROP_FRAME_WIDTH, 640);
+	capture.set(CAP_PROP_FRAME_HEIGHT, 480);
+	capture.open();
 
 	CaptureThread capthread(capture);
 
-	JpegEncoder jencoder(capthread, 60, 1.0);
+
+
+	JpegEncoder jencoder(capthread, false, 100, 1.0);
 
 	capthread.startCapture();
 	jencoder.startJpegEncode();
@@ -41,4 +47,3 @@ int main() {
 
     return 0;
 }
-
