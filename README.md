@@ -1,5 +1,6 @@
 # OpenCV sample code
 
+- ### Chia-Chen's [HackMD.io](https://hackmd.io/EYNg7ALAhgrAjATgLQQCYDM4pAZgAxIJh7BIBMEeeZCIUeApgBxxA===)
 
 ## C++ Examples
 
