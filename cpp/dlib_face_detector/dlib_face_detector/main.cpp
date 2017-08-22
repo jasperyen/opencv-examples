@@ -21,7 +21,7 @@ using namespace dlib;
 
 int main(int argc, char** argv) {
 
-	string video = "C:\\workspace\\opencv-examples\\test_data\\human_detect.mp4";
+	string video = "..\\..\\..\\test_data\\human_detect.mp4";
 
 	cv::VideoCapture capture(video);
 
