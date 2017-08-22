@@ -1,4 +1,8 @@
-#### 概要
+# BackgroundSubtractorMOG2
+
+- ### Chia-Chen's [GitHub](https://github.com/jasperyen) [HackMD.io](https://hackmd.io/EYNg7ALAhgrAjATgLQQCYDM4pAZgAxIJh7BIBMEeeZCIUeApgBxxA===) 
+
+### 概要
 
 這次要記錄的是 OpenCV 裡的 **BackgroundSubtractorMOG2** 演算法, 簡單的來說, 就是藉由前景與背景的相減, 計算出改變或者移動中的圖像, 除此之外還能透過學習新的影像, 不斷的改變背景。
 
@@ -6,11 +10,13 @@
 
 **輸入**
 
-[![](https://lh3.googleusercontent.com/-GHDPJIvZPSM/WO4wz0uRkPI/AAAAAAAAJJM/egrdUw2P9owOj3yvxOSA_dvsOuO8xRPIwCE0/s850/sub1.png "sub1.png")](https://lh3.googleusercontent.com/KTtjwzThrWjD8M84KLRnG7LC3PhnRKwOsTBc_JM8E8Lz7FhHS5iquHcwqCx-MYEEZeR7z6VUXhQaiu86ovhtLvoKLjWJoqRsfsJmCg=w3098-h1307-rw-no)
+![](https://i.imgur.com/UNvpKJk.jpg)
+
 
 **輸出**
 
-[![](https://lh3.googleusercontent.com/-OypLRZovC6A/WO4xDRzQXqI/AAAAAAAAJJc/GaSD4D4PcZ4yKryw8FXvXUnbqrDbAsrKgCE0/s850/sub2.png "sub2.png")](https://lh3.googleusercontent.com/NIqGV1mi8j-65Gc4wVFbwm3EhzWRDeyZR-VTtjgi8dYZPVD6Efey5fAOHrlN_hJ2RCxaNx-x3LtlOQeEXK7aEtmQQWIspiM_wfeNrQ=w3098-h1307-rw-no)
+![](https://i.imgur.com/ArjtAaz.png)
+
 
 
 >參考資料
@@ -18,7 +24,6 @@
 >2. [Background Subtraction Algorithm using OpenCV](https://ccw1986.blogspot.tw/2016/03/background-subtraction-algorithm-using.html)
 
 
-* 部落格連結 (Blog Link) : [Blogger](https://jasper1996826.blogspot.tw/2017/04/opencv-background-subtraction_61.html)
 * 完整程式碼 (Sample Code) : [GitHub](https://github.com/jasperyen/opencv-examples/blob/master/cpp/Background_Subtraction_MOG2/Background_Subtraction_MOG2/main.cpp)
 
 ---
