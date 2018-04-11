@@ -3,12 +3,12 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>C:\OpenCV\opencv-3.2.0\build\install\include;C:\OpenCV\opencv-3.2.0\build\install\include\opencv;C:\OpenCV\opencv-3.2.0\build\install\include\opencv2;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\OpenCV\opencv-3.2.0\build\install\x64\vc14\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Library\opencv-3.4.1-build\install\include;C:\Library\opencv-3.4.1-build\install\include\opencv;C:\Library\opencv-3.4.1-build\install\include\opencv2;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Library\opencv-3.4.1-build\install\x64\vc14\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>opencv_aruco320.lib;opencv_bgsegm320.lib;opencv_bioinspired320.lib;opencv_calib3d320.lib;opencv_ccalib320.lib;opencv_core320.lib;opencv_cudaarithm320.lib;opencv_cudabgsegm320.lib;opencv_cudacodec320.lib;opencv_cudafeatures2d320.lib;opencv_cudafilters320.lib;opencv_cudaimgproc320.lib;opencv_cudalegacy320.lib;opencv_cudaobjdetect320.lib;opencv_cudaoptflow320.lib;opencv_cudastereo320.lib;opencv_cudawarping320.lib;opencv_cudev320.lib;opencv_datasets320.lib;opencv_dnn320.lib;opencv_dpm320.lib;opencv_face320.lib;opencv_features2d320.lib;opencv_flann320.lib;opencv_fuzzy320.lib;opencv_highgui320.lib;opencv_imgcodecs320.lib;opencv_imgproc320.lib;opencv_line_descriptor320.lib;opencv_ml320.lib;opencv_objdetect320.lib;opencv_optflow320.lib;opencv_phase_unwrapping320.lib;opencv_photo320.lib;opencv_plot320.lib;opencv_reg320.lib;opencv_rgbd320.lib;opencv_saliency320.lib;opencv_shape320.lib;opencv_stereo320.lib;opencv_stitching320.lib;opencv_structured_light320.lib;opencv_superres320.lib;opencv_surface_matching320.lib;opencv_text320.lib;opencv_tracking320.lib;opencv_video320.lib;opencv_videoio320.lib;opencv_videostab320.lib;opencv_xfeatures2d320.lib;opencv_ximgproc320.lib;opencv_xobjdetect320.lib;opencv_xphoto320.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_aruco341.lib;opencv_bgsegm341.lib;opencv_bioinspired341.lib;opencv_calib3d341.lib;opencv_ccalib341.lib;opencv_core341.lib;opencv_datasets341.lib;opencv_dnn_objdetect341.lib;opencv_dnn341.lib;opencv_dpm341.lib;opencv_face341.lib;opencv_features2d341.lib;opencv_flann341.lib;opencv_fuzzy341.lib;opencv_hfs341.lib;opencv_highgui341.lib;opencv_img_hash341.lib;opencv_imgcodecs341.lib;opencv_imgproc341.lib;opencv_line_descriptor341.lib;opencv_ml341.lib;opencv_objdetect341.lib;opencv_optflow341.lib;opencv_phase_unwrapping341.lib;opencv_photo341.lib;opencv_plot341.lib;opencv_reg341.lib;opencv_rgbd341.lib;opencv_saliency341.lib;opencv_shape341.lib;opencv_stereo341.lib;opencv_stitching341.lib;opencv_structured_light341.lib;opencv_superres341.lib;opencv_surface_matching341.lib;opencv_text341.lib;opencv_tracking341.lib;opencv_video341.lib;opencv_videoio341.lib;opencv_videostab341.lib;opencv_xfeatures2d341.lib;opencv_ximgproc341.lib;opencv_xobjdetect341.lib;opencv_xphoto341.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
