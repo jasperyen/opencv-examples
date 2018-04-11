@@ -8,6 +8,7 @@
 - Brightness Change - 亮度調整 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/brightness_change)
 - Captcha detection - 驗證碼辨識 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/Captcha_detection)
 - Capture Setting - 鏡頭輸入設定 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/capture_setting)
+- Dnn face detect - Dnn臉部偵測 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/dnn_face_detect)
 - Haar cascade classifier- Harr分類器 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/haar_cascade_classifier)
 - Harris corner detector - Harris角點偵測 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/harris_corner_detector)
 - Hog human detector - Hog人形偵測 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/hog_human_detector)
