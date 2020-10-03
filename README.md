@@ -1,10 +1,10 @@
 # OpenCV sample code
 
-- ### Chia-Chen's [GitHub](https://github.com/jasperyen) [HackMD.io](https://hackmd.io/EYNg7ALAhgrAjATgLQQCYDM4pAZgAxIJh7BIBMEeeZCIUeApgBxxA===) 
+- ### Chia-Chen's [GitHub](https://github.com/jasperyen)
 
 ## C++ Examples
 
-- Background subtraction - 移動偵測 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/Background_Subtraction_MOG2) [HackMD](https://hackmd.io/KYDgLAJg7FwMYFo4EYBGA2BZYQa4yAnAgEwCGhUJUYAzGCGREA==)
+- Background subtraction - 移動偵測 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/Background_Subtraction_MOG2)
 - Brightness Change - 亮度調整 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/brightness_change)
 - Captcha detection - 驗證碼辨識 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/Captcha_detection)
 - Capture Setting - 鏡頭輸入設定 : [GtiHub](https://github.com/jasperyen/opencv-examples/tree/master/cpp/capture_setting)
